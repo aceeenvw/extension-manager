@@ -7,11 +7,8 @@ import {
     extensionTypes,
     enableExtension,
     disableExtension,
-    getExtensionManifest,
 } from '../../../extensions.js';
 import { saveSettingsDebounced, getRequestHeaders } from '../../../../script.js';
-
-const VERSION = '1.0.0';
 
 // Namespace prefix for every key, marker class and dataset flag — keeps our
 // hooks collision-free and idempotent.
@@ -796,14 +793,19 @@ function getExtType(extName) {
     return id ? extensionTypes[id] : '';
 }
 
-// Cache manifest lookups — they never change at runtime.
+// Cache manifest lookups — they never change at runtime. getExtensionManifest
+// is read from getContext() at call time (only on newer SillyTavern); on older
+// builds it's absent and we fall back to sweep-derived author/version.
 const _manifestCache = new Map();
 function getBlockManifest(block) {
     const name = blockInternalName(block);
     if (!name) return null;
     if (_manifestCache.has(name)) return _manifestCache.get(name);
     let manifest = null;
-    try { manifest = getExtensionManifest(name); } catch (_) { manifest = null; }
+    try {
+        const fn = getContext()?.getExtensionManifest;
+        if (typeof fn === 'function') manifest = fn(name);
+    } catch (_) { manifest = null; }
     _manifestCache.set(name, manifest);
     return manifest;
 }
