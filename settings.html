@@ -1,0 +1,80 @@
+<div class="extensions-manager-settings">
+    <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+            <b>⊹ EXTENSION MANAGER ⊹</b>
+            <div class="inline-drawer-icon fa-solid fa-circle-chevron-down up"></div>
+        </div>
+        <div class="inline-drawer-content" style="display: none;">
+
+            <div class="exm_settings_card">
+                <p class="exm_settings_intro" data-i18n="settings.intro">Enhances the native Manage Extensions panel: your installed extensions on top, built-ins tucked away, faster, with a few handy buttons.</p>
+
+                <div class="exm_settings_section">
+                    <h4 class="exm_settings_heading" data-i18n="settings.behaviorHeading">Behavior</h4>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_enabled">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.enabled">Enable enhancements</span>
+                            <span class="exm_set_desc" data-i18n="settings.enabledDesc">Post-process the Manage Extensions popup when it opens.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_enabled" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_collapse_builtin">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.collapseBuiltin">Collapse built-in extensions</span>
+                            <span class="exm_set_desc" data-i18n="settings.collapseBuiltinDesc">Group SillyTavern's built-in extensions into a dropdown, collapsed by default.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_collapse_builtin" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_bulk_edit">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.bulkEdit">Bulk editing</span>
+                            <span class="exm_set_desc" data-i18n="settings.bulkEditDesc">Replace the native "Toggle extensions" control with a Select mode for bulk enable, disable and delete.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_bulk_edit" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_auto_check">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.autoCheck">Check updates on open</span>
+                            <span class="exm_set_desc" data-i18n="settings.autoCheckDesc">Show the update progress when the panel opens. Turn off to keep the panel idle — use the Refresh button to check on demand.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_auto_check" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+                </div>
+
+                <div class="exm_settings_section">
+                    <h4 class="exm_settings_heading" data-i18n="settings.buttonsHeading">Buttons</h4>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_btn_search">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.btnSearch">Search box</span>
+                            <span class="exm_set_desc" data-i18n="settings.btnSearchDesc">Filter the list by name or author.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_btn_search" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_btn_refresh">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.btnRefresh">Refresh updates button</span>
+                            <span class="exm_set_desc" data-i18n="settings.btnRefreshDesc">Manually re-check for extension updates.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_btn_refresh" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+
+                    <label class="exm_set_row exm_set_toggle" for="exm_btn_copy">
+                        <span class="exm_set_text">
+                            <span class="exm_set_label" data-i18n="settings.btnCopy">Copy install URL</span>
+                            <span class="exm_set_desc" data-i18n="settings.btnCopyDesc">Per-extension button to copy its repository URL.</span>
+                        </span>
+                        <span class="exm_switch"><input id="exm_btn_copy" type="checkbox" /><span class="exm_switch_track"><span class="exm_switch_thumb"></span></span></span>
+                    </label>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
