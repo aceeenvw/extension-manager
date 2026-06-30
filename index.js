@@ -608,8 +608,8 @@ function hookUpdateButtons(popup) {
     popup.dataset[NS + 'UpdHook'] = '1';
 
     const onUpdate = () => {
-        rearmPopupWatch();              // re-enhance any rebuilt popup
-        setTimeout(scheduleReload, 1500); // reload after the git pull finishes
+        setTimeout(() => scheduleReload(), 1500); // reload after the git pull finishes
+        try { rearmPopupWatch(); } catch (err) { warn('rearm', err); } // re-enhance rebuild
     };
 
     // Per-row "Update available" buttons.
@@ -1138,9 +1138,10 @@ function watchForPopup() {
         _popupWatch = null;
     };
 
-    const layer = document.querySelector('dialog.popup, .popup_holder, #dialogue_popup, body') || document.body;
+    // Observe body (stable): ST replaces the whole dialog on update/sort, so a
+    // dialog-scoped observer would die with the old dialog and miss the rebuild.
     const obs = new MutationObserver(tick);
-    obs.observe(layer, { childList: true, subtree: true });
+    obs.observe(document.body, { childList: true, subtree: true });
     const timer = setTimeout(stop, 8500); // never linger
     _popupWatch = { obs, timer };
     tick();
