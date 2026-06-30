@@ -73,6 +73,7 @@ const I18N = {
         'ui.confirmDelete': 'Delete {n} selected extension(s)? This cannot be undone.',
         'ui.nothingSelected': 'No extensions selected',
         'ui.bulkDone': 'Done. Reloading…',
+        'ui.updateDone': 'Updated. Reloading…',
     },
     ru: {
         'settings.intro': 'Улучшает стандартную панель управления расширениями: ваши установленные расширения сверху, встроенные — свёрнуты, быстрее и с парой удобных кнопок.',
@@ -113,6 +114,7 @@ const I18N = {
         'ui.confirmDelete': 'Удалить выбранные расширения ({n})? Это действие необратимо.',
         'ui.nothingSelected': 'Расширения не выбраны',
         'ui.bulkDone': 'Готово. Перезагрузка…',
+        'ui.updateDone': 'Обновлено. Перезагрузка…',
     },
 };
 let LANG = 'en';
@@ -595,6 +597,31 @@ function enhanceManagePopup(popup) {
     }
     try { skinToggles(popup); } catch (err) { warn('toggles', err); }
     try { sortInstalledByName(popup); } catch (err) { warn('sort', err); }
+    try { hookUpdateButtons(popup); } catch (err) { warn('updhook', err); }
+}
+
+// After an update, ST rebuilds the popup (or closes it). We auto-reload once so
+// the new code applies, and re-arm the bounded watch so any fresh popup ST
+// builds in the meantime is re-enhanced (never left looking native).
+function hookUpdateButtons(popup) {
+    if (popup.dataset[NS + 'UpdHook']) return;
+    popup.dataset[NS + 'UpdHook'] = '1';
+
+    const onUpdate = () => {
+        rearmPopupWatch();              // re-enhance any rebuilt popup
+        setTimeout(scheduleReload, 1500); // reload after the git pull finishes
+    };
+
+    // Per-row "Update available" buttons.
+    popup.querySelectorAll('.extension_block .btn_update').forEach((btn) => {
+        btn.addEventListener('click', onUpdate);
+    });
+
+    // Native "Update all" / "Update enabled" (we iconified them); ST also reloads
+    // on popup close — scheduleReload's guard keeps it to a single reload.
+    popup.querySelectorAll('.extensions_toolbar > button[data-' + NS + '-icon]').forEach((btn) => {
+        btn.addEventListener('click', onUpdate);
+    });
 }
 
 /** Wrap each native enable/disable checkbox with track+thumb spans (theme-proof). */
@@ -749,8 +776,7 @@ async function bulkToggle(installed, enable) {
         if (!name) continue;
         try { await fn(name, false); } catch (err) { warn('toggle:' + name, err); }
     }
-    toast('success', t('ui.bulkDone'));
-    setTimeout(() => location.reload(), 700);
+    scheduleReload('ui.bulkDone');
 }
 
 /** Bulk delete selected installed extensions via the API, then one reload. */
@@ -775,8 +801,7 @@ async function bulkDelete(installed) {
             warn('delete:' + extName, err);
         }
     }
-    toast('success', t('ui.bulkDone'));
-    setTimeout(() => location.reload(), 700);
+    scheduleReload('ui.bulkDone');
 }
 
 /** Resolve a block's internal name (with `third-party/` prefix) for native APIs. */
@@ -831,6 +856,15 @@ function toast(kind, msg) {
         const fn = globalThis.toastr;
         if (fn && typeof fn[kind] === 'function') fn[kind](msg);
     } catch (_) { /* ignore */ }
+}
+
+// One reload only — short toast then refresh, guarded against double-fire.
+let _reloadScheduled = false;
+function scheduleReload(msgKey) {
+    if (_reloadScheduled) return;
+    _reloadScheduled = true;
+    toast('success', t(msgKey || 'ui.updateDone'));
+    setTimeout(() => location.reload(), 700);
 }
 
 /** Add a search box and a refresh button to the popup toolbar. */
@@ -1076,6 +1110,12 @@ function wrapBuiltinInDrawer(builtin) {
 // idle global observer (keeps CPU/battery quiet).
 
 let _popupWatch = null;
+
+/** Re-arm the bounded watch so an ST-rebuilt popup gets re-enhanced. */
+function rearmPopupWatch() {
+    if (_popupWatch) { _popupWatch.obs.disconnect(); clearTimeout(_popupWatch.timer); _popupWatch = null; }
+    setTimeout(watchForPopup, 0);
+}
 
 /** Briefly watch for the popup after a trigger; auto-stops. */
 function watchForPopup() {
